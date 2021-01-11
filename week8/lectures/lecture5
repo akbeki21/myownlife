@@ -1,0 +1,659 @@
+begaiym@begaiym-Aspire-E5-573G:~$ sudo mysql -u root -p
+[sudo] password for begaiym: 
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.22-0ubuntu0.20.04.3 (Ubuntu)
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASE
+    -> 
+
+^C
+mysql> SHOW DATABASE;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DATABASE' at line 1
+mysql> USE users
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+
+| user_id | username | email           | description  | city        |
++---------+----------+-----------------+--------------+-------------+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Bishkek     |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |
+|       7 | Gulzana  | mail@mail.ru    | I LOVE YOU!  | Cholpon-Ata |
++---------+----------+-----------------+--------------+-------------+
+6 rows in set (0.03 sec)
+
+mysql> DELETE FROM users WHERE user_id= 7;
+Query OK, 1 row affected (0.07 sec)
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+---------+
+| user_id | username | email           | description  | city    |
++---------+----------+-----------------+--------------+---------+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Bishkek |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek |
++---------+----------+-----------------+--------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM users;
++----------+
+| COUNT(*) |
++----------+
+|        5 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> ALTER TABLE users ADD age INT;
+Query OK, 0 rows affected (0.39 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+---------+------+
+| user_id | username | email           | description  | city    | age  |
++---------+----------+-----------------+--------------+---------+------+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek | NULL |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Bishkek | NULL |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek | NULL |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek | NULL |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek | NULL |
++---------+----------+-----------------+--------------+---------+------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE users;
++-------------+-------------------------------+------+-----+---------+----------------+
+| Field       | Type                          | Null | Key | Default | Extra          |
++-------------+-------------------------------+------+-----+---------+----------------+
+| user_id     | int                           | NO   | PRI | NULL    | auto_increment |
+| username    | varchar(30)                   | NO   | UNI | NULL    |                |
+| email       | varchar(50)                   | NO   |     | NULL    |                |
+| description | text                          | YES  |     | NULL    |                |
+| city        | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
+| age         | int                           | YES  |     | NULL    |                |
++-------------+-------------------------------+------+-----+---------+----------------+
+6 rows in set (0.04 sec)
+
+mysql> ALTEER TABLE users DROP age;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ALTEER TABLE users DROP age' at line 1
+mysql> DESCRIBE users;
++-------------+-------------------------------+------+-----+---------+----------------+
+| Field       | Type                          | Null | Key | Default | Extra          |
++-------------+-------------------------------+------+-----+---------+----------------+
+| user_id     | int                           | NO   | PRI | NULL    | auto_increment |
+| username    | varchar(30)                   | NO   | UNI | NULL    |                |
+| email       | varchar(50)                   | NO   |     | NULL    |                |
+| description | text                          | YES  |     | NULL    |                |
+| city        | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
+| age         | int                           | YES  |     | NULL    |                |
++-------------+-------------------------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> ALTER TABLE users DROP age;
+Query OK, 0 rows affected (1.73 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE users;
++-------------+-------------------------------+------+-----+---------+----------------+
+| Field       | Type                          | Null | Key | Default | Extra          |
++-------------+-------------------------------+------+-----+---------+----------------+
+| user_id     | int                           | NO   | PRI | NULL    | auto_increment |
+| username    | varchar(30)                   | NO   | UNI | NULL    |                |
+| email       | varchar(50)                   | NO   |     | NULL    |                |
+| description | text                          | YES  |     | NULL    |                |
+| city        | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
++-------------+-------------------------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> ALTER TABLE users ADD age INT NOT NULL DEFAULT 18 CHECK(age>=18);
+^[[A^[[A^[[AQuery OK, 5 rows affected (1.83 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE users;
++-------------+-------------------------------+------+-----+---------+----------------+
+| Field       | Type                          | Null | Key | Default | Extra          |
++-------------+-------------------------------+------+-----+---------+----------------+
+| user_id     | int                           | NO   | PRI | NULL    | auto_increment |
+| username    | varchar(30)                   | NO   | UNI | NULL    |                |
+| email       | varchar(50)                   | NO   |     | NULL    |                |
+| description | text                          | YES  |     | NULL    |                |
+| city        | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
+| age         | int                           | NO   |     | 18      |                |
++-------------+-------------------------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO users (user_id, username, email, city, age) VALUES 
+    -> (9, 'hello', 'HELLO@mail.ru', 'Cholpon-Ata', '23');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+-----+
+| user_id | username | email           | description  | city        | age |
++---------+----------+-----------------+--------------+-------------+-----+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |  18 |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Bishkek     |  18 |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |  18 |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |  18 |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |  18 |
+|       9 | hello    | HELLO@mail.ru   | NULL         | Cholpon-Ata |  23 |
++---------+----------+-----------------+--------------+-------------+-----+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO users (user_id, username, email, city, age) VALUES  
+    -> ('alex', 'alex@mal.ru', 'Bishkek', 17)
+    -> ;
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+-----+
+| user_id | username | email           | description  | city        | age |
++---------+----------+-----------------+--------------+-------------+-----+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |  18 |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Bishkek     |  18 |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |  18 |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |  18 |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |  18 |
+|       9 | hello    | HELLO@mail.ru   | NULL         | Cholpon-Ata |  23 |
++---------+----------+-----------------+--------------+-------------+-----+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO users (user_id, username, email, city, age) VALUES ('alex', 'alex@mal.ru', 'Bishkek', 17);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> INSERT INTO users ( username, email, city, age) VALUES ('alex', 'alex@mal.ru', 'Bishkek', 17);
+ERROR 3819 (HY000): Check constraint 'users_chk_1' is violated.
+mysql> INSERT INTO users (username, email, city, age) VALUES ('alex', 'alex@mal.ru', 'Bishkek', 17);
+ERROR 3819 (HY000): Check constraint 'users_chk_1' is violated.
+mysql> UPDATE users SET city='Cholpon-Ata' WHERE user_id=2;
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+-----+
+| user_id | username | email           | description  | city        | age |
++---------+----------+-----------------+--------------+-------------+-----+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |  18 |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Cholpon-Ata |  18 |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |  18 |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |  18 |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |  18 |
+|       9 | hello    | HELLO@mail.ru   | NULL         | Cholpon-Ata |  23 |
++---------+----------+-----------------+--------------+-------------+-----+
+6 rows in set (0.00 sec)
+
+mysql> ALTER TABLE users ADD date_of_birth DATE NULL;
+Query OK, 0 rows affected (0.42 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+| user_id | username | email           | description  | city        | age | date_of_birth |
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |  18 | NULL          |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Cholpon-Ata |  18 | NULL          |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |  18 | NULL          |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |  18 | NULL          |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |  18 | NULL          |
+|       9 | hello    | HELLO@mail.ru   | NULL         | Cholpon-Ata |  23 | NULL          |
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM users WHERE age BETWEEN 19 AND 25;
++---------+----------+---------------+-------------+-------------+-----+---------------+
+| user_id | username | email         | description | city        | age | date_of_birth |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+|       9 | hello    | HELLO@mail.ru | NULL        | Cholpon-Ata |  23 | NULL          |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM users LIMIT 1;
++---------+----------+---------------+-------------+---------+-----+---------------+
+| user_id | username | email         | description | city    | age | date_of_birth |
++---------+----------+---------------+-------------+---------+-----+---------------+
+|       1 | user1    | user1@mail.ru | I LOVE JS!  | Bishkek |  18 | NULL          |
++---------+----------+---------------+-------------+---------+-----+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM users LIMIT 2;
++---------+----------+---------------+-------------+-------------+-----+---------------+
+| user_id | username | email         | description | city        | age | date_of_birth |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+|       1 | user1    | user1@mail.ru | I LOVE JS!  | Bishkek     |  18 | NULL          |
+|       2 | user2    | user2@mail.ru | I LOVE YOU! | Cholpon-Ata |  18 | NULL          |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM users ORDER BY (DESC) LIMIT 1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DESC) LIMIT 1' at line 1
+mysql> SELECT * FROM users ORDER BY user_id DESC LIMIT 1;
++---------+----------+---------------+-------------+-------------+-----+---------------+
+| user_id | username | email         | description | city        | age | date_of_birth |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+|       9 | hello    | HELLO@mail.ru | NULL        | Cholpon-Ata |  23 | NULL          |
++---------+----------+---------------+-------------+-------------+-----+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM users ORDER BY;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> SELECT * FROM userS;
+ERROR 1146 (42S02): Table 'users.userS' doesn't exist
+mysql> SELECT * FROM users;
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+| user_id | username | email           | description  | city        | age | date_of_birth |
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+|       1 | user1    | user1@mail.ru   | I LOVE JS!   | Bishkek     |  18 | NULL          |
+|       2 | user2    | user2@mail.ru   | I LOVE YOU!  | Cholpon-Ata |  18 | NULL          |
+|       3 | user3    | user3@gmail.com | I LOVE YOU!  | Bishkek     |  18 | NULL          |
+|       4 | user4    | user4@mail.ru   | I LOVE YOU!  | Bishkek     |  18 | NULL          |
+|       5 | user5    | user5@gmail.com | Hello world! | Bishkek     |  18 | NULL          |
+|       9 | hello    | HELLO@mail.ru   | NULL         | Cholpon-Ata |  23 | NULL          |
++---------+----------+-----------------+--------------+-------------+-----+---------------+
+6 rows in set (0.01 sec)
+
+mysql> SELECT * FROM users WHERE description LIKE '%JS%';
++---------+----------+---------------+-------------+---------+-----+---------------+
+| user_id | username | email         | description | city    | age | date_of_birth |
++---------+----------+---------------+-------------+---------+-----+---------------+
+|       1 | user1    | user1@mail.ru | I LOVE JS!  | Bishkek |  18 | NULL          |
++---------+----------+---------------+-------------+---------+-----+---------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE employees (
+    -> id INT NOT NULL AUTO_INCRIMENT,
+    -> name VARCHAR(30) NOT NULL,
+    -> lastname VARCHAR(50) NOT NULL,
+    -> age INT,
+    -> city VARCHAR(50) NOT NULL, 
+    -> salary INT NOT NULL DEFAULT 20000,
+    -> PRIMARY KEY (id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AUTO_INCRIMENT,
+name VARCHAR(30) NOT NULL,
+lastname VARCHAR(50) NOT NULL,
+age IN' at line 2
+mysql> CREATE TABLE employees ( id INT NOT NULL AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age INT, city VARCHAR(50) NOT NULL,  salary INT NOT NULL DEFAULT 20000, PRIMARY KEY (id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age IN' at line 1
+mysql> CREATE TABLE employees ( id INT NOT NULL AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age INT, city VARCHAR(50) NOT NULL,  salary INT NOT NULL DEFAULT 20000, PRIMARY KEY (id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age IN' at line 1
+mysql> CREATE TABLE employees ( id INT NOT NULL AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age INT, city VARCHAR(50) NOT NULL,  salary INT NOT NULL DEFAULT 20000, PRIMARY KEY (id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age IN' at line 1
+mysql> CREATE TABLE employees ( id INT NOT NULL 'AUTO_INCRIMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(50) NOT NULL, age INT, city VARCHAR(50) NOT NULL,  salary INT NOT NULL DEFAULT 20000, PRIMARY KEY (id));
+    '> 
+    '> ^C
+
+^C
+mysql> CREATE TABLE employees (
+    -> id INT NOT NULL AUTO_INCREMENT,
+    -> name VARCHAR(30) NOT NULL,
+    -> lastname VARCHAR(30) NOT NULL;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 4
+mysql> CREATE TABLE employees ( id INT NOT NULL AUTO_INCREMENT, name VARCHAR(30) NOT NULL, lastname VARCHAR(30) NOT NULL,
+    -> age INT,
+    -> city VARCHAR(50) NOT NULL,
+    -> salary INT NOT NULL DEFAULT 20000,
+    -> PRIMARY KEY (id));
+Query OK, 0 rows affected (1.06 sec)
+
+mysql> DESCRIBE employees;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| id       | int         | NO   | PRI | NULL    | auto_increment |
+| name     | varchar(30) | NO   |     | NULL    |                |
+| lastname | varchar(30) | NO   |     | NULL    |                |
+| age      | int         | YES  |     | NULL    |                |
+| city     | varchar(50) | NO   |     | NULL    |                |
+| salary   | int         | NO   |     | 20000   |                |
++----------+-------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO employees (name, lastname, age, city, salary) VALUES
+    -> ('Ivan', Ivanov', 29, 'Moscow', 60000),
+    '> ('Nena', 'Nova', 25, 'Rim', 75000),
+    '> ('Aibek', 'Aibekov', 40, 15000),
+    '> ('Sergey', 'Petrov', 34, 40000);
+    '> 
+    '> 
+
+^C
+mysql> INSERT INTO employees (name, lastname, age, city, salary) VALUES
+    -> ('Ivan', Ivanov', 29, 'Moscow', 60000),
+    '> ('Nena', 'Nova', 25, 'Rim', 75000),
+    '> ('Aibek', 'Aibekov', 40, 'Bishkek', 15000),
+    '> ('Sergey', 'Petrov', 34, 'Moscow', 40000);
+    '> 
+    '> ;
+    '> 
+
+^C
+mysql> INSERT INTO employees (name, lastname, age, city, salary) VALUES
+    -> ('Ivan', Ivanov', 29, 'Moscow', 60000),
+    '> ('Nena', 'Nova', 25, 'Rim', 75000),
+    '> ('Aibek', 'Aibekov', 40, 'Bishkek', 15000),
+    '> ('Sergey', 'Petrov', 34, 'Moscow', 40000);
+    '> 
+
+^C
+mysql> INSERT INTO employees (name, lastname, age, city, salary) VALUES
+    -> ('Ivan', 'Ivanov', 29, 'Moscow', 60000),
+    -> ('Nena', 'Nova', 25, 'Rim', 75000),
+    -> ('Aibek', 'Aibekov', 40, 'Bishkek', 15000),
+    -> ('Sergey', 'Petrov', 34, 'Moscow', 40000);
+Query OK, 4 rows affected (0.10 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+--------+----------+------+---------+--------+
+| id | name   | lastname | age  | city    | salary |
++----+--------+----------+------+---------+--------+
+|  1 | Ivan   | Ivanov   |   29 | Moscow  |  60000 |
+|  2 | Nena   | Nova     |   25 | Rim     |  75000 |
+|  3 | Aibek  | Aibekov  |   40 | Bishkek |  15000 |
+|  4 | Sergey | Petrov   |   34 | Moscow  |  40000 |
++----+--------+----------+------+---------+--------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT SUM(salary) FROM employees;
++-------------+
+| SUM(salary) |
++-------------+
+|      190000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(age) FROM employees;
++----------+
+| AVG(age) |
++----------+
+|  32.0000 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MAX(salary) FROM employees;
++-------------+
+| MAX(salary) |
++-------------+
+|       75000 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MIN(age) FROM employees;
++----------+
+| MIN(age) |
++----------+
+|       25 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT id, name, age , (SELECT AVG(age) FROM employees) AS avg_age FROM employees HAVING age > avg_age;
++----+--------+------+---------+
+| id | name   | age  | avg_age |
++----+--------+------+---------+
+|  3 | Aibek  |   40 | 32.0000 |
+|  4 | Sergey |   34 | 32.0000 |
++----+--------+------+---------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO employees (name, lastname, age, city, salary) VALUES
+    -> ('Aijan', 'Keneshova', 18, 'Bishkek', 23000);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+
+| id | name   | lastname  | age  | city    | salary |
++----+--------+-----------+------+---------+--------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |
++----+--------+-----------+------+---------+--------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT city FROM employees;
++---------+
+| city    |
++---------+
+| Moscow  |
+| Rim     |
+| Bishkek |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*), AVG(salary), MIN(age), MAX(salary) FROM employees;
++----------+-------------+----------+-------------+
+| COUNT(*) | AVG(salary) | MIN(age) | MAX(salary) |
++----------+-------------+----------+-------------+
+|        5 |  42600.0000 |       18 |       75000 |
++----------+-------------+----------+-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CONCAT(name, " ",  lastname) FROM employees;
++------------------------------+
+| CONCAT(name, " ",  lastname) |
++------------------------------+
+| Ivan Ivanov                  |
+| Nena Nova                    |
+| Aibek Aibekov                |
+| Sergey Petrov                |
+| Aijan Keneshova              |
++------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT city, COUNT(*) FROM employees GROUP BY city;
++---------+----------+
+| city    | COUNT(*) |
++---------+----------+
+| Moscow  |        2 |
+| Rim     |        1 |
+| Bishkek |        2 |
++---------+----------+
+3 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees ADD department_id INT NOT NULL;
+Query OK, 0 rows affected (0.29 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE employees;
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| id            | int         | NO   | PRI | NULL    | auto_increment |
+| name          | varchar(30) | NO   |     | NULL    |                |
+| lastname      | varchar(30) | NO   |     | NULL    |                |
+| age           | int         | YES  |     | NULL    |                |
+| city          | varchar(50) | NO   |     | NULL    |                |
+| salary        | int         | NO   |     | 20000   |                |
+| department_id | int         | NO   |     | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> CREATE TABLE department(
+    -> id INT NOT NULL AUTO_INCREMENT,
+    -> name VARCHAR(20)^C
+
+^C
+mysql> CREATE TABLE department(
+    -> id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -> name VARCHAR(20) NOT NULL,
+    -> max_employees INT NULL);
+Query OK, 0 rows affected (0.36 sec)
+
+mysql> INSERT INTO department (name,max_employees) VALUES
+    -> ('marketing', 5),
+    -> ('sale',10);
+Query OK, 2 rows affected (0.08 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SHOW TABLES
+    -> 
+
+^C
+mysql> SHOW TABLES;
++-----------------+
+| Tables_in_users |
++-----------------+
+| department      |
+| employees       |
+| users           |
++-----------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             0 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             0 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             0 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             0 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             0 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM department;
++----+-----------+---------------+
+| id | name      | max_employees |
++----+-----------+---------------+
+|  1 | marketing |             5 |
+|  2 | sale      |            10 |
++----+-----------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             0 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             0 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             0 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             0 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             0 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.01 sec)
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employee_department FOREIGN KEY (department_id) REFERENCES department (id) ON DELETE CASCADE;
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`users`.`#sql-38c_8`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> UPDATE employees SET department_id=1;
+Query OK, 5 rows affected (0.07 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             1 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             1 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             1 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employee_department FOREIGN KEY (department_id) REFERENCES department (id) ON DELETE CASCADE;
+Query OK, 5 rows affected (1.84 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM department;
++----+-----------+---------------+
+| id | name      | max_employees |
++----+-----------+---------------+
+|  1 | marketing |             5 |
+|  2 | sale      |            10 |
++----+-----------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             1 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             1 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             1 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * , (SELECT name FROM department WHERE id=1) FROM employees;
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+| id | name   | lastname  | age  | city    | salary | department_id | (SELECT name FROM department WHERE id=1) |
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             1 | marketing                                |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 | marketing                                |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             1 | marketing                                |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 | marketing                                |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             1 | marketing                                |
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> UPDATE employees SET department_id=1 WHERE id IN (1, 3, 5);
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 3  Changed: 0  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             1 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             1 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             1 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> UPDATE employees SET department_id=2 WHERE id IN (1, 3, 5);
+Query OK, 3 rows affected (0.10 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+--------+-----------+------+---------+--------+---------------+
+| id | name   | lastname  | age  | city    | salary | department_id |
++----+--------+-----------+------+---------+--------+---------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             2 |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             2 |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             2 |
++----+--------+-----------+------+---------+--------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * , (SELECT name FROM department WHERE id=1) FROM employees;
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+| id | name   | lastname  | age  | city    | salary | department_id | (SELECT name FROM department WHERE id=1) |
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             2 | marketing                                |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 | marketing                                |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             2 | marketing                                |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 | marketing                                |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             2 | marketing                                |
++----+--------+-----------+------+---------+--------+---------------+------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * , (SELECT name FROM department WHERE id=employees.department_id) FROM employees;
++----+--------+-----------+------+---------+--------+---------------+----------------------------------------------------------------+
+| id | name   | lastname  | age  | city    | salary | department_id | (SELECT name FROM department WHERE id=employees.department_id) |
++----+--------+-----------+------+---------+--------+---------------+----------------------------------------------------------------+
+|  1 | Ivan   | Ivanov    |   29 | Moscow  |  60000 |             2 | sale                                                           |
+|  2 | Nena   | Nova      |   25 | Rim     |  75000 |             1 | marketing                                                      |
+|  3 | Aibek  | Aibekov   |   40 | Bishkek |  15000 |             2 | sale                                                           |
+|  4 | Sergey | Petrov    |   34 | Moscow  |  40000 |             1 | marketing                                                      |
+|  5 | Aijan  | Keneshova |   18 | Bishkek |  23000 |             2 | sale                                                           |
++----+--------+-----------+------+---------+--------+---------------+----------------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+

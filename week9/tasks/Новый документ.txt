@@ -1,0 +1,79 @@
+﻿* Напишите запрос для отображения names (first_name, last_name) сотрудников с использованием псевдонимов “First Name", " Last Name".First Name", " Last Name".
+SELECT first_name AS 'FIRST NAME', last_name AS 'LAST NAME' FROM employees;
+
+
+* Напишите запрос, чтобы получить уникальные department ID из таблицы employees.
+SELECT department_id FROM employees;
+
+
+* Напишите запрос, чтобы получить все сведения о сотруднике из таблицы employees в порядке убывания имени.
+SELECT * FROM employees ORDER BY first_name DESC;
+
+
+* Напишите запрос, чтобы получить employee ID, names (first_name, last_name), salary в порядке возрастания зарплаты.
+SELECT first_name, last_name, employee_id, salary FROM employees ORDER BY salary;
+
+
+* Напишите запрос, чтобы получить количество сотрудников.
+SELECT COUNT(employee_id) FROM employees;
+
+
+* Напишите запрос для отображения name (first_name, last_name) и salary для всех сотрудников чья зарплата не находится в диапазоне от
+10 000 до 15 000 долларов.
+SELECT CONCAT(first_name,' ', last_name) AS Name, salary FROM employees WHERE salary NOT BETWEEN 10000 AND 15000;
+
+
+* Напишите запрос для отображения name (first_name, last_name) и department ID всех сотрудников в отделах 30 или 100 в порядке возрастания.
+SELECT CONCAT(first_name, ' ', last_name)AS Name, department_id FROM employees WHERE department_id IN (30,100);
+
+
+* Напишите запрос для отображения name (first_name, last_name) и hire date всех сотрудников, которые были наняты в 1987 году.
+SELECT CONCAT(first_name, ' ', last_name) AS Name, hire_date FROM employees WHERE hire_date LIKE "%1987%";
+
+
+* Напишите запрос, чтобы отобразить last name, job title и salary для всех сотрудников, чья работа является Programmer или Shipping Clerk и чья зарплата не равна 4500, 10 000 или 15 000 долларов.
+SELECT last_name, jobs.job_title, salary FROM employees JOIN jobs ON employees.job_id=jobs.job_id WHERE jobs.job_title IN ('Programmer', 'Shipping Clerk') AND employees.salary NOT IN (4500, 10000, 15000);
+
+
+* Напишите запрос, чтобы выбрать все записи из таблицы employees с фамилиями "BLAKE", "SCOTT", "KING" и "FORD".
+SELECT * FROM employees WHERE last_name IN("BLAKE", "SCOTT","KING", "FORD");
+
+
+
+
+
+
+* Напишите запрос, чтобы получить общую сумму заработной платы, выплачиваемой сотрудникам.
+SELECT SUM(salary) FROM employees;
+
+
+* Напишите запрос, чтобы получить минимальную зарплату из таблицы employees.
+SELECT MIN(salary) FROM employees;
+
+
+* Напишите запрос, чтобы получить среднюю зарплату и количество сотрудников, работающих в отделе 90.
+SELECT AVG(salary) AS Average, COUNT(employee_id) FROM employees WHERE department_id=90 ;
+
+
+* Напишите запрос, чтобы получить количество сотрудников с одной и той же работой.
+SELECT job_title, COUNT(*) FROM employees INNER JOIN jobs ON employees.job_id=jobs.job_id GROUP BY employees.job_id HAVING COUNT(*);
+
+
+* Напишите запрос, чтобы получить среднюю зарплату для каждого job ID, за исключением программиста.
+SELECT AVG(salary) FROM employees WHERE job_id NOT IN('IT_PROG');
+
+
+* Напишите запрос для поиска addresses (location_id, street_address, city, state_province, country_name) всех отделов. Подсказка: используйте INNER JOIN.
+SELECT LOCATION_ID, STREET_ADDRESS, CITY,STATE_PROVINCE, COUNTRY_NAME FROM locations INNER JOIN countries ON locations.country_id=countries.country_id;
+
+
+* Напишите запрос, чтобы найти name (first_name, last name), department ID всех сотрудников.
+SELECT CONCAT(first_name,' ', last_name)AS Employees, department_id FROM employees;
+
+
+* Напишите запрос, чтобы найти employee ID, name (last_name) вместе с их manager_id и его name (last_name).
+SELECT employees.EMPLOYEE_ID, CONCAT(employees.FIRST_NAME, ' ', employees.LAST_NAME) AS FULL_NAME, CONCAT(emp.FIRST_NAME,' ',emp.LAST_NAME) AS MANAGER_FULL_NAME, emp.EMPLOYEE_ID AS MANAGER_ID FROM employees INNER JOIN employees AS emp ON (employees.MANAGER_ID=emp.MANAGER_ID);
+
+
+
+

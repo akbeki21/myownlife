@@ -1,0 +1,5 @@
+django==2.2.8
+pillow==7.1
+mysqlclient==2.0.2
+python-decouple
+

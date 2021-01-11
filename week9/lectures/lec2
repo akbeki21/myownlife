@@ -1,0 +1,1121 @@
+begaiym@begaiym-Aspire-E5-573G:~$ sudpo mysql -u root -p
+
+Command 'sudpo' not found, did you mean:
+
+  command 'sudo' from deb sudo (1.8.31-1ubuntu1.1)
+  command 'sudo' from deb sudo-ldap (1.8.31-1ubuntu1.1)
+
+Try: sudo apt install <deb name>
+
+begaiym@begaiym-Aspire-E5-573G:~$ sudo mysql -u root -p
+[sudo] password for begaiym: 
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.0.22-0ubuntu0.20.04.3 (Ubuntu)
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| task               |
+| users              |
+| world_x            |
++--------------------+
+7 rows in set (0.01 sec)
+
+mysql> USE users;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> DESCRIVE users;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DESCRIVE users' at line 1
+mysql> DESCRIBE users;
+
+mysql> UPDATE employees SET department_id=1;
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> INSERT INTO department VALUES(1, 'sale', 10);
+Query OK, 1 row affected (0.14 sec)
+
+mysql> UPDATE employees SET department_id=1;
+Query OK, 2 rows affected (0.15 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> UPDATE department SET id=10 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> UPDATE department SET id=10 WHERE id=3;
+Query OK, 1 row affected (0.12 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employes_department;
+Query OK, 0 rows affected (0.59 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+ERROR 1826 (HY000): Duplicate foreign key constraint name 'fk_employees_department'
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employes_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+Query OK, 2 rows affected (1.47 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM department;
++----+---------+---------------+
+| id | name    | max_employees |
++----+---------+---------------+
+|  1 | sale    |            10 |
+|  4 | finance |            15 |
+| 10 | HR      |             3 |
++----+---------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> UPDATE department SET id=3 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> UPDATE department SET id=3 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employee_department;
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employes_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+ERROR 1826 (HY000): Duplicate foreign key constraint name 'fk_employes_department'
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE INDEX emp_age ON employees (age);
+Query OK, 0 rows affected (0.79 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employees WHERE age=28;
++----+-------+--------------+------+------+--------+---------------+-------+
+| id | name  | lastname     | age  | city | salary | department_id | chief |
++----+-------+--------------+------+------+--------+---------------+-------+
+|  7 | Alina | Sultanbekova |   28 | Osh  |  30000 |             1 |     3 |
++----+-------+--------------+------+------+--------+---------------+-------+
+1 row in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM employees WHERE age=28;
++----+-------------+-----------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table     | partitions | type | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-----------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | employees | NULL       | ref  | emp_age       | emp_age | 5       | const |    1 |   100.00 | NULL  |
++----+-------------+-----------+------------+------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.33 sec)
+
+mysql>                                                                                                                                                                                                           ^C
+
+^C
+mysql> DROP INDEX emp_age ON employees (age);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(age)' at line 1
+mysql> SELECT * FROM users;
++---------+----------+-----------------+----------+
+| user_id | username | email           | password |
++---------+----------+-----------------+----------+
+|       1 | user1    | user1@mail.ru   |          |
+|       2 | user2    | user2@mail.ru   |          |
+|       3 | user3    | user3@gmail.com |          |
+|       4 | user4    | user4@mail.ru   |          |
+|       5 | user5    | user5@gmail.com |          |
+|       9 | hello    | HELLO@mail.ru   |          |
++---------+----------+-----------------+----------+
+6 rows in set (0.00 sec)
+
+mysql> EXPLAIN SELECT * FROM users WHERE email='user4@mail.ru';
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | users | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    6 |    16.67 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> CREATE INDEX user_email ON users (email);
+Query OK, 0 rows affected (0.60 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> EXPLAIN SELECT * FROM users WHERE email='user4@mail.ru';
++----+-------------+-------+------------+------+---------------+------------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type | possible_keys | key        | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+------+---------------+------------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | users | NULL       | ref  | user_email    | user_email | 202     | const |    1 |   100.00 | NULL  |
++----+-------------+-------+------------+------+---------------+------------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> SHOW INDEXES FROM employees;
++-----------+------------+------------------------+--------------+---------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| Table     | Non_unique | Key_name               | Seq_in_index | Column_name   | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
++-----------+------------+------------------------+--------------+---------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| employees |          0 | PRIMARY                |            1 | id            | A         |           2 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| employees |          1 | fk_employes_department |            1 | department_id | A         |           1 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
+| employees |          1 | emp_age                |            1 | age           | A         |           2 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
++-----------+------------+------------------------+--------------+---------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+3 rows in set (0.28 sec)
+
+mysql> 
+
+
++---------------+-------------------------------+------+-----+---------+----------------+
+| Field         | Type                          | Null | Key | Default | Extra          |
++---------------+-------------------------------+------+-----+---------+----------------+
+| user_id       | int                           | NO   | PRI | NULL    | auto_increment |
+| username      | varchar(30)                   | NO   | UNI | NULL    |                |
+| email         | varchar(50)                   | NO   |     | NULL    |                |
+| description   | text                          | YES  |     | NULL    |                |
+| city          | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
+| age           | int                           | NO   |     | 18      |                |
+| date_of_birth | date                          | YES  |     | NULL    |                |
++---------------+-------------------------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> SHOW TABLES;
++-----------------+
+| Tables_in_users |
++-----------------+
+| department      |
+| employees       |
+| users           |
++-----------------+
+3 rows in set (0.01 sec)
+
+mysql> DESCRIBE EMPLOYEES;
+ERROR 1146 (42S02): Table 'users.EMPLOYEES' doesn't exist
+mysql> CREATE TABLE user_profiles (id INT NOT NULL PRIMARY KEY, age INT NULL, description VARCHAR(50) NULL, gender ENUM('male', 'female'));
+Query OK, 0 rows affected (0.58 sec)
+
+mysql> DESCRIBE users;
++---------------+-------------------------------+------+-----+---------+----------------+
+| Field         | Type                          | Null | Key | Default | Extra          |
++---------------+-------------------------------+------+-----+---------+----------------+
+| user_id       | int                           | NO   | PRI | NULL    | auto_increment |
+| username      | varchar(30)                   | NO   | UNI | NULL    |                |
+| email         | varchar(50)                   | NO   |     | NULL    |                |
+| description   | text                          | YES  |     | NULL    |                |
+| city          | enum('Bishkek','Cholpon-Ata') | NO   |     | Bishkek |                |
+| age           | int                           | NO   |     | 18      |                |
+| date_of_birth | date                          | YES  |     | NULL    |                |
++---------------+-------------------------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> ALTER TABLE users DROP description;
+Query OK, 0 rows affected (2.10 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE users DROP city;
+Query OK, 0 rows affected (1.68 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE users DROP age;
+Query OK, 0 rows affected (1.79 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE users DROP date_of_birth;
+Query OK, 0 rows affected (1.82 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE users;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| user_id  | int         | NO   | PRI | NULL    | auto_increment |
+| username | varchar(30) | NO   | UNI | NULL    |                |
+| email    | varchar(50) | NO   |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+3 rows in set (0.01 sec)
+
+mysql> ALTER TABLE users ADD password VARCHAR(32) NOT NULL;
+Query OK, 0 rows affected (0.44 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE users;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| user_id  | int         | NO   | PRI | NULL    | auto_increment |
+| username | varchar(30) | NO   | UNI | NULL    |                |
+| email    | varchar(50) | NO   |     | NULL    |                |
+| password | varchar(32) | NO   |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> DESCRIBE user_profiles;
++-------------+-----------------------+------+-----+---------+-------+
+| Field       | Type                  | Null | Key | Default | Extra |
++-------------+-----------------------+------+-----+---------+-------+
+| id          | int                   | NO   | PRI | NULL    |       |
+| age         | int                   | YES  |     | NULL    |       |
+| description | varchar(50)           | YES  |     | NULL    |       |
+| gender      | enum('male','female') | YES  |     | NULL    |       |
++-------------+-----------------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE user_profiles ADD CONSTRAINT fk_user_profiles FOREIGN KEY (id) REFERENCES users(user_id);
+Query OK, 0 rows affected (1.58 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE user_profiles;
++-------------+-----------------------+------+-----+---------+-------+
+| Field       | Type                  | Null | Key | Default | Extra |
++-------------+-----------------------+------+-----+---------+-------+
+| id          | int                   | NO   | PRI | NULL    |       |
+| age         | int                   | YES  |     | NULL    |       |
+| description | varchar(50)           | YES  |     | NULL    |       |
+| gender      | enum('male','female') | YES  |     | NULL    |       |
++-------------+-----------------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+----------+
+| user_id | username | email           | password |
++---------+----------+-----------------+----------+
+|       1 | user1    | user1@mail.ru   |          |
+|       2 | user2    | user2@mail.ru   |          |
+|       3 | user3    | user3@gmail.com |          |
+|       4 | user4    | user4@mail.ru   |          |
+|       5 | user5    | user5@gmail.com |          |
+|       9 | hello    | HELLO@mail.ru   |          |
++---------+----------+-----------------+----------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO user_profiles VALUES(1, 18, NULL, 'female');
+Query OK, 1 row affected (0.15 sec)
+
+mysql> SELECT * FROM users;
++---------+----------+-----------------+----------+
+| user_id | username | email           | password |
++---------+----------+-----------------+----------+
+|       1 | user1    | user1@mail.ru   |          |
+|       2 | user2    | user2@mail.ru   |          |
+|       3 | user3    | user3@gmail.com |          |
+|       4 | user4    | user4@mail.ru   |          |
+|       5 | user5    | user5@gmail.com |          |
+|       9 | hello    | HELLO@mail.ru   |          |
++---------+----------+-----------------+----------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM user_profiles;
++----+------+-------------+--------+
+| id | age  | description | gender |
++----+------+-------------+--------+
+|  1 |   18 | NULL        | female |
++----+------+-------------+--------+
+1 row in set (0.01 sec)
+
+mysql> INSERT INTO user_profiles VALUES(5, 22, NULL, 'male');
+Query OK, 1 row affected (0.09 sec)
+
+mysql> SELECT * FROM user_profiles;
++----+------+-------------+--------+
+| id | age  | description | gender |
++----+------+-------------+--------+
+|  1 |   18 | NULL        | female |
+|  5 |   22 | NULL        | male   |
++----+------+-------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| task               |
+| users              |
+| world_x            |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql> use information_schema;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SHO TABLES;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SHO TABLES' at line 1
+mysql> SHOW TABLES
+    -> ;
++---------------------------------------+
+| Tables_in_information_schema          |
++---------------------------------------+
+| ADMINISTRABLE_ROLE_AUTHORIZATIONS     |
+| APPLICABLE_ROLES                      |
+| CHARACTER_SETS                        |
+| CHECK_CONSTRAINTS                     |
+| COLLATIONS                            |
+| COLLATION_CHARACTER_SET_APPLICABILITY |
+| COLUMNS                               |
+| COLUMNS_EXTENSIONS                    |
+| COLUMN_PRIVILEGES                     |
+| COLUMN_STATISTICS                     |
+| ENABLED_ROLES                         |
+| ENGINES                               |
+| EVENTS                                |
+| FILES                                 |
+| INNODB_BUFFER_PAGE                    |
+| INNODB_BUFFER_PAGE_LRU                |
+| INNODB_BUFFER_POOL_STATS              |
+| INNODB_CACHED_INDEXES                 |
+| INNODB_CMP                            |
+| INNODB_CMPMEM                         |
+| INNODB_CMPMEM_RESET                   |
+| INNODB_CMP_PER_INDEX                  |
+| INNODB_CMP_PER_INDEX_RESET            |
+| INNODB_CMP_RESET                      |
+| INNODB_COLUMNS                        |
+| INNODB_DATAFILES                      |
+| INNODB_FIELDS                         |
+| INNODB_FOREIGN                        |
+| INNODB_FOREIGN_COLS                   |
+| INNODB_FT_BEING_DELETED               |
+| INNODB_FT_CONFIG                      |
+| INNODB_FT_DEFAULT_STOPWORD            |
+| INNODB_FT_DELETED                     |
+| INNODB_FT_INDEX_CACHE                 |
+| INNODB_FT_INDEX_TABLE                 |
+| INNODB_INDEXES                        |
+| INNODB_METRICS                        |
+| INNODB_SESSION_TEMP_TABLESPACES       |
+| INNODB_TABLES                         |
+| INNODB_TABLESPACES                    |
+| INNODB_TABLESPACES_BRIEF              |
+| INNODB_TABLESTATS                     |
+| INNODB_TEMP_TABLE_INFO                |
+| INNODB_TRX                            |
+| INNODB_VIRTUAL                        |
+| KEYWORDS                              |
+| KEY_COLUMN_USAGE                      |
+| OPTIMIZER_TRACE                       |
+| PARAMETERS                            |
+| PARTITIONS                            |
+| PLUGINS                               |
+| PROCESSLIST                           |
+| PROFILING                             |
+| REFERENTIAL_CONSTRAINTS               |
+| RESOURCE_GROUPS                       |
+| ROLE_COLUMN_GRANTS                    |
+| ROLE_ROUTINE_GRANTS                   |
+| ROLE_TABLE_GRANTS                     |
+| ROUTINES                              |
+| SCHEMATA                              |
+| SCHEMATA_EXTENSIONS                   |
+| SCHEMA_PRIVILEGES                     |
+| STATISTICS                            |
+| ST_GEOMETRY_COLUMNS                   |
+| ST_SPATIAL_REFERENCE_SYSTEMS          |
+| ST_UNITS_OF_MEASURE                   |
+| TABLES                                |
+| TABLESPACES                           |
+| TABLESPACES_EXTENSIONS                |
+| TABLES_EXTENSIONS                     |
+| TABLE_CONSTRAINTS                     |
+| TABLE_CONSTRAINTS_EXTENSIONS          |
+| TABLE_PRIVILEGES                      |
+| TRIGGERS                              |
+| USER_ATTRIBUTES                       |
+| USER_PRIVILEGES                       |
+| VIEWS                                 |
+| VIEW_ROUTINE_USAGE                    |
+| VIEW_TABLE_USAGE                      |
++---------------------------------------+
+79 rows in set (0.00 sec)
+
+mysql> SELECT * FROM TABLE
+    -> -CONSTAINTS;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'TABLE
+-CONSTAINTS' at line 1
+mysql> SELECT * FROM TABLE_CONSTRAINTS;
++--------------------+--------------------+------------------------+--------------------+------------------------------------------------------+-----------------+----------+
+| CONSTRAINT_CATALOG | CONSTRAINT_SCHEMA  | CONSTRAINT_NAME        | TABLE_SCHEMA       | TABLE_NAME                                           | CONSTRAINT_TYPE | ENFORCED |
++--------------------+--------------------+------------------------+--------------------+------------------------------------------------------+-----------------+----------+
+| def                | mysql              | PRIMARY                | mysql              | innodb_table_stats                                   | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | innodb_index_stats                                   | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | cond_instances                                       | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | error_log                                            | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_waits_current                                 | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_waits_history                                 | PRIMARY KEY     | YES      |
+| def                | performance_schema | HOST                   | performance_schema | events_waits_summary_by_host_by_event_name           | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_waits_summary_by_instance                     | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_waits_summary_by_thread_by_event_name         | PRIMARY KEY     | YES      |
+| def                | performance_schema | USER                   | performance_schema | events_waits_summary_by_user_by_event_name           | UNIQUE          | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | events_waits_summary_by_account_by_event_name        | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_waits_summary_global_by_event_name            | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | file_instances                                       | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | file_summary_by_event_name                           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | file_summary_by_instance                             | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | host_cache                                           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | mutex_instances                                      | PRIMARY KEY     | YES      |
+| def                | performance_schema | OBJECT                 | performance_schema | objects_summary_global_by_type                       | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | processlist                                          | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | rwlock_instances                                     | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | setup_actors                                         | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | setup_consumers                                      | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | setup_instruments                                    | PRIMARY KEY     | YES      |
+| def                | performance_schema | OBJECT                 | performance_schema | setup_objects                                        | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | setup_threads                                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | OBJECT                 | performance_schema | table_io_waits_summary_by_index_usage                | UNIQUE          | YES      |
+| def                | performance_schema | OBJECT                 | performance_schema | table_io_waits_summary_by_table                      | UNIQUE          | YES      |
+| def                | performance_schema | OBJECT                 | performance_schema | table_lock_waits_summary_by_table                    | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | threads                                              | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_stages_current                                | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_stages_history                                | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_stages_summary_by_thread_by_event_name        | PRIMARY KEY     | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | events_stages_summary_by_account_by_event_name       | UNIQUE          | YES      |
+| def                | performance_schema | USER                   | performance_schema | events_stages_summary_by_user_by_event_name          | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | events_stages_summary_by_host_by_event_name          | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_stages_summary_global_by_event_name           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_current                            | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_history                            | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_summary_by_thread_by_event_name    | PRIMARY KEY     | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | events_statements_summary_by_account_by_event_name   | UNIQUE          | YES      |
+| def                | performance_schema | USER                   | performance_schema | events_statements_summary_by_user_by_event_name      | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | events_statements_summary_by_host_by_event_name      | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_summary_global_by_event_name       | PRIMARY KEY     | YES      |
+| def                | performance_schema | SCHEMA_NAME            | performance_schema | events_statements_summary_by_digest                  | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_summary_by_program                 | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_statements_histogram_global                   | PRIMARY KEY     | YES      |
+| def                | performance_schema | SCHEMA_NAME            | performance_schema | events_statements_histogram_by_digest                | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_transactions_current                          | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_transactions_history                          | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_transactions_summary_by_thread_by_event_name  | PRIMARY KEY     | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | events_transactions_summary_by_account_by_event_name | UNIQUE          | YES      |
+| def                | performance_schema | USER                   | performance_schema | events_transactions_summary_by_user_by_event_name    | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | events_transactions_summary_by_host_by_event_name    | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | events_transactions_summary_global_by_event_name     | PRIMARY KEY     | YES      |
+| def                | performance_schema | USER                   | performance_schema | events_errors_summary_by_user_by_error               | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | events_errors_summary_by_host_by_error               | UNIQUE          | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | events_errors_summary_by_account_by_error            | UNIQUE          | YES      |
+| def                | performance_schema | THREAD_ID              | performance_schema | events_errors_summary_by_thread_by_error             | UNIQUE          | YES      |
+| def                | performance_schema | ERROR_NUMBER           | performance_schema | events_errors_summary_global_by_error                | UNIQUE          | YES      |
+| def                | performance_schema | USER                   | performance_schema | users                                                | UNIQUE          | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | accounts                                             | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | hosts                                                | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | socket_instances                                     | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | socket_summary_by_instance                           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | socket_summary_by_event_name                         | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | session_connect_attrs                                | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | session_account_connect_attrs                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | memory_summary_global_by_event_name                  | PRIMARY KEY     | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | memory_summary_by_account_by_event_name              | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | memory_summary_by_host_by_event_name                 | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | memory_summary_by_thread_by_event_name               | PRIMARY KEY     | YES      |
+| def                | performance_schema | USER                   | performance_schema | memory_summary_by_user_by_event_name                 | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | table_handles                                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | metadata_locks                                       | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | data_locks                                           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_connection_configuration                 | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_connection_status                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_applier_configuration                    | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_applier_status                           | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_applier_status_by_coordinator            | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_applier_status_by_worker                 | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | replication_asynchronous_connection_failover         | PRIMARY KEY     | YES      |
+| def                | performance_schema | OWNER_THREAD_ID        | performance_schema | prepared_statements_instances                        | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | prepared_statements_instances                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | user_variables_by_thread                             | PRIMARY KEY     | YES      |
+| def                | performance_schema | ACCOUNT                | performance_schema | status_by_account                                    | UNIQUE          | YES      |
+| def                | performance_schema | HOST                   | performance_schema | status_by_host                                       | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | status_by_thread                                     | PRIMARY KEY     | YES      |
+| def                | performance_schema | USER                   | performance_schema | status_by_user                                       | UNIQUE          | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | global_status                                        | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | session_status                                       | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | variables_by_thread                                  | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | global_variables                                     | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | session_variables                                    | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | persisted_variables                                  | PRIMARY KEY     | YES      |
+| def                | performance_schema | PRIMARY                | performance_schema | user_defined_functions                               | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | db                                                   | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | user                                                 | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | default_roles                                        | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | role_edges                                           | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | global_grants                                        | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | password_history                                     | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | func                                                 | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | plugin                                               | PRIMARY KEY     | YES      |
+| def                | mysql              | name                   | mysql              | help_topic                                           | UNIQUE          | YES      |
+| def                | mysql              | PRIMARY                | mysql              | help_topic                                           | PRIMARY KEY     | YES      |
+| def                | mysql              | name                   | mysql              | help_category                                        | UNIQUE          | YES      |
+| def                | mysql              | PRIMARY                | mysql              | help_category                                        | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | help_relation                                        | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | servers                                              | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | tables_priv                                          | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | columns_priv                                         | PRIMARY KEY     | YES      |
+| def                | mysql              | name                   | mysql              | help_keyword                                         | UNIQUE          | YES      |
+| def                | mysql              | PRIMARY                | mysql              | help_keyword                                         | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | time_zone_name                                       | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | time_zone                                            | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | time_zone_transition                                 | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | time_zone_transition_type                            | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | time_zone_leap_second                                | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | procs_priv                                           | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | component                                            | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | slave_relay_log_info                                 | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | slave_master_info                                    | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | slave_worker_info                                    | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | gtid_executed                                        | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | replication_asynchronous_connection_failover         | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | server_cost                                          | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | engine_cost                                          | PRIMARY KEY     | YES      |
+| def                | mysql              | PRIMARY                | mysql              | proxies_priv                                         | PRIMARY KEY     | YES      |
+| def                | sys                | PRIMARY                | sys                | sys_config                                           | PRIMARY KEY     | YES      |
+| def                | users              | PRIMARY                | users              | department                                           | PRIMARY KEY     | YES      |
+| def                | world_x            | PRIMARY                | world_x            | city                                                 | PRIMARY KEY     | YES      |
+| def                | world_x            | PRIMARY                | world_x            | country                                              | PRIMARY KEY     | YES      |
+| def                | world_x            | PRIMARY                | world_x            | countryinfo                                          | PRIMARY KEY     | YES      |
+| def                | world_x            | PRIMARY                | world_x            | countrylanguage                                      | PRIMARY KEY     | YES      |
+| def                | world_x            | countrylanguage_ibfk_1 | world_x            | countrylanguage                                      | FOREIGN KEY     | YES      |
+| def                | users              | PRIMARY                | users              | employees                                            | PRIMARY KEY     | YES      |
+| def                | users              | fk_employee_department | users              | employees                                            | FOREIGN KEY     | YES      |
+| def                | task               | PRIMARY                | task               | regions                                              | PRIMARY KEY     | YES      |
+| def                | task               | region_name            | task               | regions                                              | UNIQUE          | YES      |
+| def                | task               | PRIMARY                | task               | employees                                            | PRIMARY KEY     | YES      |
+| def                | task               | PRIMARY                | task               | jobs                                                 | PRIMARY KEY     | YES      |
+| def                | task               | country_name           | task               | countries                                            | UNIQUE          | YES      |
+| def                | task               | PRIMARY                | task               | countries                                            | PRIMARY KEY     | YES      |
+| def                | task               | region_id              | task               | countries                                            | FOREIGN KEY     | YES      |
+| def                | task               | PRIMARY                | task               | locations                                            | PRIMARY KEY     | YES      |
+| def                | task               | country_id             | task               | locations                                            | FOREIGN KEY     | YES      |
+| def                | task               | PRIMARY                | task               | departments                                          | PRIMARY KEY     | YES      |
+| def                | task               | location_id            | task               | departments                                          | FOREIGN KEY     | YES      |
+| def                | task               | employee_id            | task               | job_history                                          | FOREIGN KEY     | YES      |
+| def                | task               | job_history_ibfk_1     | task               | job_history                                          | FOREIGN KEY     | YES      |
+| def                | task               | job_history_ibfk_2     | task               | job_history                                          | FOREIGN KEY     | YES      |
+| def                | users              | PRIMARY                | users              | users                                                | PRIMARY KEY     | YES      |
+| def                | users              | username               | users              | users                                                | UNIQUE          | YES      |
+| def                | users              | PRIMARY                | users              | user_profiles                                        | PRIMARY KEY     | YES      |
+| def                | users              | fk_user_profiles       | users              | user_profiles                                        | FOREIGN KEY     | YES      |
++--------------------+--------------------+------------------------+--------------------+------------------------------------------------------+-----------------+----------+
+156 rows in set (0.07 sec)
+
+mysql> USE users;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> CREATE TABLE orders;
+ERROR 1113 (42000): A table must have at least 1 column
+mysql> CREATE TABLE orders (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, created_date DATETIME NOT NULL, description VARCHAR(100), user_id INT NOT NULL, CONSTRAINED fk_ordes
+    -> ^C
+
+^C
+mysql> CREATE TABLE orders (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, created_date DATETIME NOT NULL, description VARCHAR(100), user_id INT
+NOT NULL, CONSTRAINED fk_ordes_users FOREIGN KEY (user_id) REFERENCES users(user_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'fk_ordes_users FOREIGN KEY (user_id) REFERENCES users(user_id))' at line 1
+mysql> CREATE TABLE orders (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, created_date DATETIME NOT NULL, description VARCHAR(100), user_id INT
+NOT NULL, CONSTRAINt fk_ordes_users FOREIGN KEY (user_id) REFERENCES users(user_id));
+Query OK, 0 rows affected (1.05 sec)
+
+mysql> CREATE TABLE products (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20) NOT NULL, info VARCHAR(100));
+Query OK, 0 rows affected (0.94 sec)
+
+mysql> CREATE TABLE orderitems (id INT NOT NULL PRIMARY KEY, order_id INT NOT NULL, product_id INT NOT NULL, CONSTRAINT fk_orderitem_order FPREIGN KEY (order_id) REFERENCES orders(id), CONSTRAINT fk_orderitem_product FOREIGN KEY(product_id) REFERENCES product(id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FPREIGN KEY (order_id) REFERENCES orders(id), CONSTRAINT fk_orderitem_product FO' at line 1
+mysql> CREATE TABLE orderitems (id INT NOT NULL PRIMARY KEY, order_id INT NOT NULL, product_id INT NOT NULL, CONSTRAINT fk_orderitem_order FOREIGN KEY (order_id) REFERENCES orders(id), CONSTRAINT fk_orderitem_product FOREIGN KEY(product_id) REFERENCES product(id));
+ERROR 1824 (HY000): Failed to open the referenced table 'product'
+mysql> CREATE TABLE orderitems (id INT NOT NULL PRIMARY KEY, order_id INT NOT NULL, product_id INT NOT NULL, CONSTRAINT fk_orderitem_order FOREIGN KEY (order_id) REFERENCES orders(id), CONSTRAINT fk_orderitem_product FOREIGN KEY(product_id) REFERENCES products(id));
+Query OK, 0 rows affected (1.70 sec)
+
+mysql> SHOW TABLES;
+SHOW TABLES;
+^C
+mysql> SHOW TABLES;
++-----------------+
+| Tables_in_users |
++-----------------+
+| department      |
+| employees       |
+| orderitems      |
+| orders          |
+| products        |
+| user_profiles   |
+| users           |
++-----------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employess;
+ERROR 1146 (42S02): Table 'users.employess' doesn't exist
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+---------+--------+---------------+-------+
+| id | name    | lastname     | age  | city    | salary | department_id | chief |
++----+---------+--------------+------+---------+--------+---------------+-------+
+|  1 | Ivan    | Ivanov       |   29 | Moscow  |  60000 |             2 |  NULL |
+|  2 | Nena    | Nova         |   25 | Rim     |  75000 |             1 |  NULL |
+|  3 | Aibek   | Aibekov      |   40 | Bishkek |  15000 |             2 |  NULL |
+|  4 | Sergey  | Petrov       |   34 | Moscow  |  40000 |             1 |  NULL |
+|  5 | Aijan   | Keneshova    |   18 | Bishkek |  23000 |             2 |  NULL |
+|  6 | Janybek | Ashirov      |   32 | Naryn   |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh     |  30000 |          NULL |     3 |
++----+---------+--------------+------+---------+--------+---------------+-------+
+7 rows in set (0.00 sec)
+
+mysql> DELETE FROM department WHERE id=2;
+Query OK, 1 row affected (0.15 sec)
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+--------+--------+---------------+-------+
+| id | name    | lastname     | age  | city   | salary | department_id | chief |
++----+---------+--------------+------+--------+--------+---------------+-------+
+|  2 | Nena    | Nova         |   25 | Rim    |  75000 |             1 |  NULL |
+|  4 | Sergey  | Petrov       |   34 | Moscow |  40000 |             1 |  NULL |
+|  6 | Janybek | Ashirov      |   32 | Naryn  |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh    |  30000 |          NULL |     3 |
++----+---------+--------------+------+--------+--------+---------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employees_department;
+ERROR 1091 (42000): Can't DROP 'fk_employees_department'; check that column/key exists
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employees_department;
+ERROR 1091 (42000): Can't DROP 'fk_employees_department'; check that column/key exists
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+--------+--------+---------------+-------+
+| id | name    | lastname     | age  | city   | salary | department_id | chief |
++----+---------+--------------+------+--------+--------+---------------+-------+
+|  2 | Nena    | Nova         |   25 | Rim    |  75000 |             1 |  NULL |
+|  4 | Sergey  | Petrov       |   34 | Moscow |  40000 |             1 |  NULL |
+|  6 | Janybek | Ashirov      |   32 | Naryn  |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh    |  30000 |          NULL |     3 |
++----+---------+--------------+------+--------+--------+---------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL;
+Query OK, 4 rows affected (1.89 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+--------+--------+---------------+-------+
+| id | name    | lastname     | age  | city   | salary | department_id | chief |
++----+---------+--------------+------+--------+--------+---------------+-------+
+|  2 | Nena    | Nova         |   25 | Rim    |  75000 |             1 |  NULL |
+|  4 | Sergey  | Petrov       |   34 | Moscow |  40000 |             1 |  NULL |
+|  6 | Janybek | Ashirov      |   32 | Naryn  |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh    |  30000 |          NULL |     3 |
++----+---------+--------------+------+--------+--------+---------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DELETE FROM deaprtment WHERE id=1;
+ERROR 1146 (42S02): Table 'users.deaprtment' doesn't exist
+mysql> DELETE FROM department WHERE id=1;
+Query OK, 1 row affected (0.33 sec)
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |          NULL |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE;
+ERROR 1826 (HY000): Duplicate foreign key constraint name 'fk_employees_department'
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employes_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE;
+Query OK, 2 rows affected (1.82 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> USE world_x;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SHOW TABLES;
++-------------------+
+| Tables_in_world_x |
++-------------------+
+| city              |
+| country           |
+| countryinfo       |
+| countrylanguage   |
++-------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM city LIMIT 10;
++----+----------------+-------------+---------------+-------------------------+
+| ID | Name           | CountryCode | District      | Info                    |
++----+----------------+-------------+---------------+-------------------------+
+|  1 | Kabul          | AFG         | Kabol         | {"Population": 1780000} |
+|  2 | Qandahar       | AFG         | Qandahar      | {"Population": 237500}  |
+|  3 | Herat          | AFG         | Herat         | {"Population": 186800}  |
+|  4 | Mazar-e-Sharif | AFG         | Balkh         | {"Population": 127800}  |
+|  5 | Amsterdam      | NLD         | Noord-Holland | {"Population": 731200}  |
+|  6 | Rotterdam      | NLD         | Zuid-Holland  | {"Population": 593321}  |
+|  7 | Haag           | NLD         | Zuid-Holland  | {"Population": 440900}  |
+|  8 | Utrecht        | NLD         | Utrecht       | {"Population": 234323}  |
+|  9 | Eindhoven      | NLD         | Noord-Brabant | {"Population": 201843}  |
+| 10 | Tilburg        | NLD         | Noord-Brabant | {"Population": 193238}  |
++----+----------------+-------------+---------------+-------------------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM contries LIMIT 10;
+ERROR 1146 (42S02): Table 'world_x.contries' doesn't exist
+mysql> SELECT * FROM countries LIMIT 10;
+ERROR 1146 (42S02): Table 'world_x.countries' doesn't exist
+mysql> SELECT * FROM country LIMIT 10;
++------+----------------------+---------+-------+
+| Code | Name                 | Capital | Code2 |
++------+----------------------+---------+-------+
+| ABW  | Aruba                |     129 | AW    |
+| AFG  | Afghanistan          |       1 | AF    |
+| AGO  | Angola               |      56 | AO    |
+| AIA  | Anguilla             |      62 | AI    |
+| ALB  | Albania              |      34 | AL    |
+| AND  | Andorra              |      55 | AD    |
+| ANT  | Netherlands Antilles |      33 | AN    |
+| ARE  | United Arab Emirates |      65 | AE    |
+| ARG  | Argentina            |      69 | AR    |
+| ARM  | Armenia              |     126 | AM    |
++------+----------------------+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM country WHERE Code='RUS';
++------+--------------------+---------+-------+
+| Code | Name               | Capital | Code2 |
++------+--------------------+---------+-------+
+| RUS  | Russian Federation |    3580 | RU    |
++------+--------------------+---------+-------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM city WHERE Country.Code='RUS';
+ERROR 1054 (42S22): Unknown column 'Country.Code' in 'where clause'
+mysql> SELECT * FROM city WHERE CountryCode='RUS';
++------+---------------------------+-------------+-----------------------+-------------------------+
+| ID   | Name                      | CountryCode | District              | Info                    |
++------+---------------------------+-------------+-----------------------+-------------------------+
+| 3580 | Moscow                    | RUS         | Moscow (City)         | {"Population": 8389200} |
+| 3581 | St Petersburg             | RUS         | Pietari               | {"Population": 4694000} |
+| 3582 | Novosibirsk               | RUS         | Novosibirsk           | {"Population": 1398800} |
+| 3583 | Nizni Novgorod            | RUS         | Nizni Novgorod        | {"Population": 1357000} |
+| 3584 | Jekaterinburg             | RUS         | Sverdlovsk            | {"Population": 1266300} |
+| 3585 | Samara                    | RUS         | Samara                | {"Population": 1156100} |
+| 3586 | Omsk                      | RUS         | Omsk                  | {"Population": 1148900} |
+| 3587 | Kazan                     | RUS         | Tatarstan             | {"Population": 1101000} |
+| 3588 | Ufa                       | RUS         | Baškortostan          | {"Population": 1091200} |
+| 3589 | Tšeljabinsk               | RUS         | Tšeljabinsk           | {"Population": 1083200} |
+| 3590 | Rostov-na-Donu            | RUS         | Rostov-na-Donu        | {"Population": 1012700} |
+| 3591 | Perm                      | RUS         | Perm                  | {"Population": 1009700} |
+| 3592 | Volgograd                 | RUS         | Volgograd             | {"Population": 993400}  |
+| 3593 | Voronez                   | RUS         | Voronez               | {"Population": 907700}  |
+| 3594 | Krasnojarsk               | RUS         | Krasnojarsk           | {"Population": 875500}  |
+| 3595 | Saratov                   | RUS         | Saratov               | {"Population": 874000}  |
+| 3596 | Toljatti                  | RUS         | Samara                | {"Population": 722900}  |
+| 3597 | Uljanovsk                 | RUS         | Uljanovsk             | {"Population": 667400}  |
+| 3598 | Izevsk                    | RUS         | Udmurtia              | {"Population": 652800}  |
+| 3599 | Krasnodar                 | RUS         | Krasnodar             | {"Population": 639000}  |
+| 3600 | Jaroslavl                 | RUS         | Jaroslavl             | {"Population": 616700}  |
+| 3601 | Habarovsk                 | RUS         | Habarovsk             | {"Population": 609400}  |
+| 3602 | Vladivostok               | RUS         | Primorje              | {"Population": 606200}  |
+| 3603 | Irkutsk                   | RUS         | Irkutsk               | {"Population": 593700}  |
+| 3604 | Barnaul                   | RUS         | Altai                 | {"Population": 580100}  |
+| 3605 | Novokuznetsk              | RUS         | Kemerovo              | {"Population": 561600}  |
+| 3606 | Penza                     | RUS         | Penza                 | {"Population": 532200}  |
+| 3607 | Rjazan                    | RUS         | Rjazan                | {"Population": 529900}  |
+| 3608 | Orenburg                  | RUS         | Orenburg              | {"Population": 523600}  |
+| 3609 | Lipetsk                   | RUS         | Lipetsk               | {"Population": 521000}  |
+| 3610 | Nabereznyje Tšelny        | RUS         | Tatarstan             | {"Population": 514700}  |
+| 3611 | Tula                      | RUS         | Tula                  | {"Population": 506100}  |
+| 3612 | Tjumen                    | RUS         | Tjumen                | {"Population": 503400}  |
+| 3613 | Kemerovo                  | RUS         | Kemerovo              | {"Population": 492700}  |
+| 3614 | Astrahan                  | RUS         | Astrahan              | {"Population": 486100}  |
+| 3615 | Tomsk                     | RUS         | Tomsk                 | {"Population": 482100}  |
+| 3616 | Kirov                     | RUS         | Kirov                 | {"Population": 466200}  |
+| 3617 | Ivanovo                   | RUS         | Ivanovo               | {"Population": 459200}  |
+| 3618 | Tšeboksary                | RUS         | Tšuvassia             | {"Population": 459200}  |
+| 3619 | Brjansk                   | RUS         | Brjansk               | {"Population": 457400}  |
+| 3620 | Tver                      | RUS         | Tver                  | {"Population": 454900}  |
+| 3621 | Kursk                     | RUS         | Kursk                 | {"Population": 443500}  |
+| 3622 | Magnitogorsk              | RUS         | Tšeljabinsk           | {"Population": 427900}  |
+| 3623 | Kaliningrad               | RUS         | Kaliningrad           | {"Population": 424400}  |
+| 3624 | Nizni Tagil               | RUS         | Sverdlovsk            | {"Population": 390900}  |
+| 3625 | Murmansk                  | RUS         | Murmansk              | {"Population": 376300}  |
+| 3626 | Ulan-Ude                  | RUS         | Burjatia              | {"Population": 370400}  |
+| 3627 | Kurgan                    | RUS         | Kurgan                | {"Population": 364700}  |
+| 3628 | Arkangeli                 | RUS         | Arkangeli             | {"Population": 361800}  |
+| 3629 | Sotši                     | RUS         | Krasnodar             | {"Population": 358600}  |
+| 3630 | Smolensk                  | RUS         | Smolensk              | {"Population": 353400}  |
+| 3631 | Orjol                     | RUS         | Orjol                 | {"Population": 344500}  |
+| 3632 | Stavropol                 | RUS         | Stavropol             | {"Population": 343300}  |
+| 3633 | Belgorod                  | RUS         | Belgorod              | {"Population": 342000}  |
+| 3634 | Kaluga                    | RUS         | Kaluga                | {"Population": 339300}  |
+| 3635 | Vladimir                  | RUS         | Vladimir              | {"Population": 337100}  |
+| 3636 | Mahatškala                | RUS         | Dagestan              | {"Population": 332800}  |
+| 3637 | Tšerepovets               | RUS         | Vologda               | {"Population": 324400}  |
+| 3638 | Saransk                   | RUS         | Mordva                | {"Population": 314800}  |
+| 3639 | Tambov                    | RUS         | Tambov                | {"Population": 312000}  |
+| 3640 | Vladikavkaz               | RUS         | North Ossetia-Alania  | {"Population": 310100}  |
+| 3641 | Tšita                     | RUS         | Tšita                 | {"Population": 309900}  |
+| 3642 | Vologda                   | RUS         | Vologda               | {"Population": 302500}  |
+| 3643 | Veliki Novgorod           | RUS         | Novgorod              | {"Population": 299500}  |
+| 3644 | Komsomolsk-na-Amure       | RUS         | Habarovsk             | {"Population": 291600}  |
+| 3645 | Kostroma                  | RUS         | Kostroma              | {"Population": 288100}  |
+| 3646 | Volzski                   | RUS         | Volgograd             | {"Population": 286900}  |
+| 3647 | Taganrog                  | RUS         | Rostov-na-Donu        | {"Population": 284400}  |
+| 3648 | Petroskoi                 | RUS         | Karjala               | {"Population": 282100}  |
+| 3649 | Bratsk                    | RUS         | Irkutsk               | {"Population": 277600}  |
+| 3650 | Dzerzinsk                 | RUS         | Nizni Novgorod        | {"Population": 277100}  |
+| 3651 | Surgut                    | RUS         | Hanti-Mansia          | {"Population": 274900}  |
+| 3652 | Orsk                      | RUS         | Orenburg              | {"Population": 273900}  |
+| 3653 | Sterlitamak               | RUS         | Baškortostan          | {"Population": 265200}  |
+| 3654 | Angarsk                   | RUS         | Irkutsk               | {"Population": 264700}  |
+| 3655 | Joškar-Ola                | RUS         | Marinmaa              | {"Population": 249200}  |
+| 3656 | Rybinsk                   | RUS         | Jaroslavl             | {"Population": 239600}  |
+| 3657 | Prokopjevsk               | RUS         | Kemerovo              | {"Population": 237300}  |
+| 3658 | Niznevartovsk             | RUS         | Hanti-Mansia          | {"Population": 233900}  |
+| 3659 | Naltšik                   | RUS         | Kabardi-Balkaria      | {"Population": 233400}  |
+| 3660 | Syktyvkar                 | RUS         | Komi                  | {"Population": 229700}  |
+| 3661 | Severodvinsk              | RUS         | Arkangeli             | {"Population": 229300}  |
+| 3662 | Bijsk                     | RUS         | Altai                 | {"Population": 225000}  |
+| 3663 | Niznekamsk                | RUS         | Tatarstan             | {"Population": 223400}  |
+| 3664 | Blagoveštšensk            | RUS         | Amur                  | {"Population": 222000}  |
+| 3665 | Šahty                     | RUS         | Rostov-na-Donu        | {"Population": 221800}  |
+| 3666 | Staryi Oskol              | RUS         | Belgorod              | {"Population": 213800}  |
+| 3667 | Zelenograd                | RUS         | Moscow (City)         | {"Population": 207100}  |
+| 3668 | Balakovo                  | RUS         | Saratov               | {"Population": 206000}  |
+| 3669 | Novorossijsk              | RUS         | Krasnodar             | {"Population": 203300}  |
+| 3670 | Pihkova                   | RUS         | Pihkova               | {"Population": 201500}  |
+| 3671 | Zlatoust                  | RUS         | Tšeljabinsk           | {"Population": 196900}  |
+| 3672 | Jakutsk                   | RUS         | Saha (Jakutia)        | {"Population": 195400}  |
+| 3673 | Podolsk                   | RUS         | Moskova               | {"Population": 194300}  |
+| 3674 | Petropavlovsk-Kamtšatski  | RUS         | Kamtšatka             | {"Population": 194100}  |
+| 3675 | Kamensk-Uralski           | RUS         | Sverdlovsk            | {"Population": 190600}  |
+| 3676 | Engels                    | RUS         | Saratov               | {"Population": 189000}  |
+| 3677 | Syzran                    | RUS         | Samara                | {"Population": 186900}  |
+| 3678 | Grozny                    | RUS         | Tšetšenia             | {"Population": 186000}  |
+| 3679 | Novotšerkassk             | RUS         | Rostov-na-Donu        | {"Population": 184400}  |
+| 3680 | Berezniki                 | RUS         | Perm                  | {"Population": 181900}  |
+| 3681 | Juzno-Sahalinsk           | RUS         | Sahalin               | {"Population": 179200}  |
+| 3682 | Volgodonsk                | RUS         | Rostov-na-Donu        | {"Population": 178200}  |
+| 3683 | Abakan                    | RUS         | Hakassia              | {"Population": 169200}  |
+| 3684 | Maikop                    | RUS         | Adygea                | {"Population": 167300}  |
+| 3685 | Miass                     | RUS         | Tšeljabinsk           | {"Population": 166200}  |
+| 3686 | Armavir                   | RUS         | Krasnodar             | {"Population": 164900}  |
+| 3687 | Ljubertsy                 | RUS         | Moskova               | {"Population": 163900}  |
+| 3688 | Rubtsovsk                 | RUS         | Altai                 | {"Population": 162600}  |
+| 3689 | Kovrov                    | RUS         | Vladimir              | {"Population": 159900}  |
+| 3690 | Nahodka                   | RUS         | Primorje              | {"Population": 157700}  |
+| 3691 | Ussurijsk                 | RUS         | Primorje              | {"Population": 157300}  |
+| 3692 | Salavat                   | RUS         | Baškortostan          | {"Population": 156800}  |
+| 3693 | Mytištši                  | RUS         | Moskova               | {"Population": 155700}  |
+| 3694 | Kolomna                   | RUS         | Moskova               | {"Population": 150700}  |
+| 3695 | Elektrostal               | RUS         | Moskova               | {"Population": 147000}  |
+| 3696 | Murom                     | RUS         | Vladimir              | {"Population": 142400}  |
+| 3697 | Kolpino                   | RUS         | Pietari               | {"Population": 141200}  |
+| 3698 | Norilsk                   | RUS         | Krasnojarsk           | {"Population": 140800}  |
+| 3699 | Almetjevsk                | RUS         | Tatarstan             | {"Population": 140700}  |
+| 3700 | Novomoskovsk              | RUS         | Tula                  | {"Population": 138100}  |
+| 3701 | Dimitrovgrad              | RUS         | Uljanovsk             | {"Population": 137000}  |
+| 3702 | Pervouralsk               | RUS         | Sverdlovsk            | {"Population": 136100}  |
+| 3703 | Himki                     | RUS         | Moskova               | {"Population": 133700}  |
+| 3704 | Balašiha                  | RUS         | Moskova               | {"Population": 132900}  |
+| 3705 | Nevinnomyssk              | RUS         | Stavropol             | {"Population": 132600}  |
+| 3706 | Pjatigorsk                | RUS         | Stavropol             | {"Population": 132500}  |
+| 3707 | Korolev                   | RUS         | Moskova               | {"Population": 132400}  |
+| 3708 | Serpuhov                  | RUS         | Moskova               | {"Population": 132000}  |
+| 3709 | Odintsovo                 | RUS         | Moskova               | {"Population": 127400}  |
+| 3710 | Orehovo-Zujevo            | RUS         | Moskova               | {"Population": 124900}  |
+| 3711 | Kamyšin                   | RUS         | Volgograd             | {"Population": 124600}  |
+| 3712 | Novotšeboksarsk           | RUS         | Tšuvassia             | {"Population": 123400}  |
+| 3713 | Tšerkessk                 | RUS         | Karatšai-Tšerkessia   | {"Population": 121700}  |
+| 3714 | Atšinsk                   | RUS         | Krasnojarsk           | {"Population": 121600}  |
+| 3715 | Magadan                   | RUS         | Magadan               | {"Population": 121000}  |
+| 3716 | Mitšurinsk                | RUS         | Tambov                | {"Population": 120700}  |
+| 3717 | Kislovodsk                | RUS         | Stavropol             | {"Population": 120400}  |
+| 3718 | Jelets                    | RUS         | Lipetsk               | {"Population": 119400}  |
+| 3719 | Seversk                   | RUS         | Tomsk                 | {"Population": 118600}  |
+| 3720 | Noginsk                   | RUS         | Moskova               | {"Population": 117200}  |
+| 3721 | Velikije Luki             | RUS         | Pihkova               | {"Population": 116300}  |
+| 3722 | Novokuibyševsk            | RUS         | Samara                | {"Population": 116200}  |
+| 3723 | Neftekamsk                | RUS         | Baškortostan          | {"Population": 115700}  |
+| 3724 | Leninsk-Kuznetski         | RUS         | Kemerovo              | {"Population": 113800}  |
+| 3725 | Oktjabrski                | RUS         | Baškortostan          | {"Population": 111500}  |
+| 3726 | Sergijev Posad            | RUS         | Moskova               | {"Population": 111100}  |
+| 3727 | Arzamas                   | RUS         | Nizni Novgorod        | {"Population": 110700}  |
+| 3728 | Kiseljovsk                | RUS         | Kemerovo              | {"Population": 110000}  |
+| 3729 | Novotroitsk               | RUS         | Orenburg              | {"Population": 109600}  |
+| 3730 | Obninsk                   | RUS         | Kaluga                | {"Population": 108300}  |
+| 3731 | Kansk                     | RUS         | Krasnojarsk           | {"Population": 107400}  |
+| 3732 | Glazov                    | RUS         | Udmurtia              | {"Population": 106300}  |
+| 3733 | Solikamsk                 | RUS         | Perm                  | {"Population": 106000}  |
+| 3734 | Sarapul                   | RUS         | Udmurtia              | {"Population": 105700}  |
+| 3735 | Ust-Ilimsk                | RUS         | Irkutsk               | {"Population": 105200}  |
+| 3736 | Štšolkovo                 | RUS         | Moskova               | {"Population": 104900}  |
+| 3737 | Mezduretšensk             | RUS         | Kemerovo              | {"Population": 104400}  |
+| 3738 | Usolje-Sibirskoje         | RUS         | Irkutsk               | {"Population": 103500}  |
+| 3739 | Elista                    | RUS         | Kalmykia              | {"Population": 103300}  |
+| 3740 | Novošahtinsk              | RUS         | Rostov-na-Donu        | {"Population": 101900}  |
+| 3741 | Votkinsk                  | RUS         | Udmurtia              | {"Population": 101700}  |
+| 3742 | Kyzyl                     | RUS         | Tyva                  | {"Population": 101100}  |
+| 3743 | Serov                     | RUS         | Sverdlovsk            | {"Population": 100400}  |
+| 3744 | Zelenodolsk               | RUS         | Tatarstan             | {"Population": 100200}  |
+| 3745 | Zeleznodoroznyi           | RUS         | Moskova               | {"Population": 100100}  |
+| 3746 | Kinešma                   | RUS         | Ivanovo               | {"Population": 100000}  |
+| 3747 | Kuznetsk                  | RUS         | Penza                 | {"Population": 98200}   |
+| 3748 | Uhta                      | RUS         | Komi                  | {"Population": 98000}   |
+| 3749 | Jessentuki                | RUS         | Stavropol             | {"Population": 97900}   |
+| 3750 | Tobolsk                   | RUS         | Tjumen                | {"Population": 97600}   |
+| 3751 | Neftejugansk              | RUS         | Hanti-Mansia          | {"Population": 97400}   |
+| 3752 | Bataisk                   | RUS         | Rostov-na-Donu        | {"Population": 97300}   |
+| 3753 | Nojabrsk                  | RUS         | Yamalin Nenetsia      | {"Population": 97300}   |
+| 3754 | Balašov                   | RUS         | Saratov               | {"Population": 97100}   |
+| 3755 | Zeleznogorsk              | RUS         | Kursk                 | {"Population": 96900}   |
+| 3756 | Zukovski                  | RUS         | Moskova               | {"Population": 96500}   |
+| 3757 | Anzero-Sudzensk           | RUS         | Kemerovo              | {"Population": 96100}   |
+| 3758 | Bugulma                   | RUS         | Tatarstan             | {"Population": 94100}   |
+| 3759 | Zeleznogorsk              | RUS         | Krasnojarsk           | {"Population": 94000}   |
+| 3760 | Novouralsk                | RUS         | Sverdlovsk            | {"Population": 93300}   |
+| 3761 | Puškin                    | RUS         | Pietari               | {"Population": 92900}   |
+| 3762 | Vorkuta                   | RUS         | Komi                  | {"Population": 92600}   |
+| 3763 | Derbent                   | RUS         | Dagestan              | {"Population": 92300}   |
+| 3764 | Kirovo-Tšepetsk           | RUS         | Kirov                 | {"Population": 91600}   |
+| 3765 | Krasnogorsk               | RUS         | Moskova               | {"Population": 91000}   |
+| 3766 | Klin                      | RUS         | Moskova               | {"Population": 90000}   |
+| 3767 | Tšaikovski                | RUS         | Perm                  | {"Population": 90000}   |
+| 3768 | Novyi Urengoi             | RUS         | Yamalin Nenetsia      | {"Population": 89800}   |
++------+---------------------------+-------------+-----------------------+-------------------------+
+189 rows in set (0.01 sec)
+
+mysql> SELECT * FROM country WHERE Code='RUS';
++------+--------------------+---------+-------+
+| Code | Name               | Capital | Code2 |
++------+--------------------+---------+-------+
+| RUS  | Russian Federation |    3580 | RU    |
++------+--------------------+---------+-------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE country SET Code='RF' WHERE Code='RUS';
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`world_x`.`countrylanguage`, CONSTRAINT `countrylanguage_ibfk_1` FOREIGN KEY (`CountryCode`) REFERENCES `country` (`Code`))
+mysql> ALTER TABLE city DROP FOREIGN KEY countrylanguage_ibfk_1
+ALTER TABLE city DROP FOREIGN KEY countrylanguage_ibfk_1
+^C
+mysql> use USERS;
+ERROR 1049 (42000): Unknown database 'USERS'
+mysql> USE users;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |          NULL |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |          NULL |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> UPDATE employees SET department_id=1;
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> INSERT INTO department VALUES(1, 'sale', 10);
+Query OK, 1 row affected (0.14 sec)
+
+mysql> UPDATE employees SET department_id=1;
+Query OK, 2 rows affected (0.15 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> UPDATE department SET id=10 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> UPDATE department SET id=10 WHERE id=3;
+Query OK, 1 row affected (0.12 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employes_department;
+Query OK, 0 rows affected (0.59 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+ERROR 1826 (HY000): Duplicate foreign key constraint name 'fk_employees_department'
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employes_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+Query OK, 2 rows affected (1.47 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM employees;
++----+---------+--------------+------+-------+--------+---------------+-------+
+| id | name    | lastname     | age  | city  | salary | department_id | chief |
++----+---------+--------------+------+-------+--------+---------------+-------+
+|  6 | Janybek | Ashirov      |   32 | Naryn |  27000 |             1 |  NULL |
+|  7 | Alina   | Sultanbekova |   28 | Osh   |  30000 |             1 |     3 |
++----+---------+--------------+------+-------+--------+---------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM department;
++----+---------+---------------+
+| id | name    | max_employees |
++----+---------+---------------+
+|  1 | sale    |            10 |
+|  4 | finance |            15 |
+| 10 | HR      |             3 |
++----+---------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> UPDATE department SET id=3 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> UPDATE department SET id=3 WHERE id=1;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`users`.`employees`, CONSTRAINT `fk_employee_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`id`) ON DELETE CASCADE)
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employee_department;
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employees ADD CONSTRAINT fk_employes_department FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE SET NULL ON UPDATE CASCADE;
+ERROR 1826 (HY000): Duplicate foreign key constraint name 'fk_employes_department'
+mysql> ALTER TABLE employees DROP FOREIGN KEY fk_employee_department;
+
+
